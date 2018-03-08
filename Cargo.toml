@@ -1,0 +1,7 @@
+[package]
+name = "cargo-ubuild"
+version = "0.1.0"
+authors = ["Ed Baskerville <ed@edbaskerville.com>"]
+
+[dependencies]
+strip-ansi-escapes = "0.1.0"
