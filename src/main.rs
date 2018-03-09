@@ -94,21 +94,32 @@ impl Main {
     }
 
     fn process_jump(&mut self, line: String) {
-        if let Some(ref root_str) = self.root {
-            let line_pieces: Vec<&str> = line.split(JUMP_DELIM).collect();
-            if line_pieces.len() == 2 {
-                eprint!("{}", " ".repeat(
-                    line_pieces.get(0).unwrap().len() + JUMP_DELIM.len()
-                ));
-                let link_str = line_pieces.get(1).unwrap();
+        let line_pieces: Vec<&str> = line.split(JUMP_DELIM).collect();
+        if line_pieces.len() == 2 {
+            eprint!("{}", " ".repeat(
+                line_pieces.get(0).unwrap().len() + JUMP_DELIM.len()
+            ));
+            let link_str = line_pieces.get(1).unwrap();
 
-                let link_str_pieces: Vec<&str> = link_str.split(':').collect();
-                if link_str_pieces.len() == 3 {
-                    let path = link_str_pieces.get(0).unwrap();
-                    let line = u32::from_str(link_str_pieces.get(1).unwrap()).unwrap();
-                    let col = u32::from_str(link_str_pieces.get(2).unwrap()).unwrap();
-            
-                    eprintln!("txmt://open?url={}/{}&line={}&column={}", root_str, path, line, col);
+            let link_str_pieces: Vec<&str> = link_str.split(':').collect();
+            if link_str_pieces.len() == 3 {
+                let path = link_str_pieces.get(0).unwrap();
+                let line = u32::from_str(link_str_pieces.get(1).unwrap()).unwrap();
+                let col = u32::from_str(link_str_pieces.get(2).unwrap()).unwrap();
+                
+                let url = if path.starts_with("/") {
+                    Some(format!("file://{}", path))
+                } else {
+                    match self.root {
+                        Some(ref root) => {
+                            Some(format!("{}/{}", root, path))
+                        },
+                        None => None,
+                    }
+                };
+        
+                if let Some(ref url) = url {
+                    eprintln!("txmt://open?url={}&line={}&column={}", url, line, col);
                 }
             }
         }
