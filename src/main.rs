@@ -119,7 +119,12 @@ impl Main {
                 };
         
                 if let Some(ref url) = url {
-                    eprintln!("txmt://open?url={}&line={}&column={}", url, line, col);
+                    eprintln!(
+                        "{}txmt://open?url={}&line={}&column={}{}",
+                        "\u{001B}[1m\u{001B}[31m",
+                        url, line, col,
+                        "\u{001B}[0m"
+                    );
                 }
             }
         }
